@@ -103,8 +103,8 @@ public class DeviceManager {
         options.setNoReset(true);
         options.setFullReset(false);
         options.setAutoGrantPermissions(true);
-        options.setAppPackage("com.shopee.vn");
-        options.setAppActivity("com.shopee.app.ui.home.HomeActivity_");
+//        options.setAppPackage("com.shopee.vn");
+//        options.setAppActivity("com.shopee.app.ui.home.HomeActivity_");
         options.setAdbExecTimeout(Duration.ofSeconds(60));
         options.setCapability("ignoreHiddenApiPolicyError", true);
 

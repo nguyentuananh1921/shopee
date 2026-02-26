@@ -2,6 +2,7 @@ package proxy;
 
 import org.openqa.selenium.By;
 import utils.Adb;
+import utils.DeviceManager;
 import utils.MobileUI;
 
 public class ProxyManager {
@@ -13,8 +14,13 @@ public class ProxyManager {
     By passwordInput = By.xpath("//android.widget.TextView[@text=\"Password\"]/following-sibling::android.widget.EditText[1]");
     By createBtn = By.xpath("//android.widget.TextView[@text=\"Create\"]");
 
+    By connection_status = By.xpath("//android.widget.TextView[contains(@text, \"connected\")]");
+
     public void OpenOxyProxyManagerApp(){
         Adb.sendAdbCommand("shell am start -n io.oxylabs.proxymanager/.MainActivity");
+    }
+    public void CloseOxyProxyManagerApp(){
+        Adb.sendAdbCommand("shell am force-stop io.oxylabs.proxymanager");
     }
 
     public void clickAddNewProxy(){
@@ -44,15 +50,36 @@ public class ProxyManager {
     }
 
     public void setProxyForDevice(InforProxy infor){
-        clickAddNewProxy();
-        setProxyName(infor.getName());
-        setServerIP(infor.getServerIp());
-        setPort(infor.getPort());
-        setUserName(infor.getUserName());
-        setPassword(infor.getPassWord());
-        clickCreate();
+        CloseOxyProxyManagerApp();
+        MobileUI.sleep(2);
+        OpenOxyProxyManagerApp();
+        MobileUI.sleep(2);
+        if (!checkPorxyExist(infor.getServerIp())){
+            clickAddNewProxy();
+            setProxyName(infor.getName());
+            setServerIP(infor.getServerIp());
+            setPort(infor.getPort());
+            setUserName(infor.getUserName());
+            setPassword(infor.getPassWord());
+            clickCreate();
+        }
+
     }
     public boolean checkPorxyConnected(){
-        return true;
+        return MobileUI.getTextElementByPageSource(connection_status,"trang thai ket noi proxy").contains("Connected to");
     }
+
+    public void connectProxy(InforProxy infor){
+        setProxyForDevice(infor);
+        MobileUI.clickElement(getProxyOption(infor.getServerIp()));
+    }
+
+    public boolean checkPorxyExist(String proxyIp){
+        return MobileUI.isElementPresentAndDisplayed(getProxyOption(proxyIp),1);
+    }
+
+    public By getProxyOption(String proxyIp){
+        return By.xpath("//android.widget.TextView[@text=\"Proxy List\"]/following-sibling::android.view.View/android.widget.TextView[contains(@text, '" + proxyIp + "')]");
+    }
+
 }

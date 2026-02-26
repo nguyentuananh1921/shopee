@@ -2,6 +2,8 @@ package org.example;
 
 import handleException.VariablesThreadLocal;
 import pages.LivePage;
+import proxy.InforProxy;
+import proxy.ProxyManager;
 import utils.DeviceManager;
 
 import static pages.LivePage.*;
@@ -35,33 +37,40 @@ public class Excute implements Runnable{
         System.out.println("Thread: " + Thread.currentThread().getName());
         DeviceManager devicemanager = new DeviceManager(getPort(), getDeviceId());
         LivePage shopeeLive = new LivePage();
-        while (true){
-            try {
-                devicemanager.runAppiumServer();
-                devicemanager.setUpDriverTest();
-                shopeeLive.navigateToLivePage();
-                while (true) {
-                    if(VariablesThreadLocal.hasError()){
-                        VariablesThreadLocal.clear();
-                        break;
-                    }
-                    shopeeLive.nhanThuongTungXu();
-                    shopeeLive.nhanThuongHangNgay();
-                    System.out.println("Tổng số tiền nhận được: " + TongSoXu);
-                    if(VariablesThreadLocal.hasRewardCount() >= 10) break;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            finally {
-                if(VariablesThreadLocal.hasRewardCount() >= 10) {
-                    System.out.println("copleted");
-                    break;
-                }
-                devicemanager.tearDownDriver();
-                devicemanager.stopAppiumServer();
 
-            }
-        }
+        devicemanager.runAppiumServer();
+        devicemanager.setUpDriverTest();
+        InforProxy inforProxy = new InforProxy("HANA","113.160.166.133","30040","hana","hana");
+        ProxyManager proxyManager = new ProxyManager();
+        proxyManager.connectProxy(inforProxy);
+
+//        while (true){
+//            try {
+//                devicemanager.runAppiumServer();
+//                devicemanager.setUpDriverTest();
+//                shopeeLive.navigateToLivePage();
+//                while (true) {
+//                    if(VariablesThreadLocal.hasError()){
+//                        VariablesThreadLocal.clear();
+//                        break;
+//                    }
+//                    shopeeLive.nhanThuongTungXu();
+//                    shopeeLive.nhanThuongHangNgay();
+//                    System.out.println("Tổng số tiền nhận được: " + TongSoXu);
+//                    if(VariablesThreadLocal.hasRewardCount() >= 10) break;
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            finally {
+//                if(VariablesThreadLocal.hasRewardCount() >= 10) {
+//                    System.out.println("copleted");
+//                    break;
+//                }
+//                devicemanager.tearDownDriver();
+//                devicemanager.stopAppiumServer();
+//
+//            }
+//        }
     }
 }
